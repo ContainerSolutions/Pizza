@@ -35,7 +35,8 @@ impl Pizza {
             <img src="{}" width="400"/>
             <p>{}</p>
         </body>
-        </html>"#,
+        </html>
+"#,
             self.name, self.name, self.image, self.description
         )
     }

@@ -95,11 +95,14 @@ pub fn index() -> Result<Pizza, Error> {
     }
 }
 
-fn attach_sigterm() -> Result<(), Error> {
-    ctrlc::set_handler(|| {
+fn attach_sigterm(r: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
+    match ctrlc::set_handler(|| {
         println!("SIGTERM caught, shutting down...");
         std::process::exit(0);
-    }).map_err(|e| e.into())
+    }) {
+        Ok(_) => Ok(r),
+        Err(_) => Err(r)
+    }
 }
 
 fn main() {
@@ -109,11 +112,6 @@ fn main() {
         .finalize()
         .unwrap();
 
-    let app = rocket::custom(config, false).attach(fairing::AdHoc::on_attach(|r| {
-        match attach_sigterm() {
-            Ok(_) => Ok(r),
-            Err(_) => Err(r),
-        }
-    }));
+    let app = rocket::custom(config, false).attach(fairing::AdHoc::on_attach(attach_sigterm));
     app.mount("/", routes![index, images]).launch();
 }

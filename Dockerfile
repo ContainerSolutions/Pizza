@@ -14,7 +14,7 @@ RUN cargo build --release
 
 
 FROM debian:stable-slim
-
+USER 80000
 COPY --from=builder /usr/src/pizza/target/release/pizza /pizza
 COPY img /img
 CMD ["/pizza"]

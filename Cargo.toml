@@ -8,3 +8,4 @@ authors = ["Adrian Mouat <adrian.mouat@container-solutions.com>"]
 rocket = "0.3.8"
 rocket_codegen = "0.3.8"
 failure = "0.1"
+ctrlc = {version="3.1", features = ["termination"]}

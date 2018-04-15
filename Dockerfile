@@ -17,7 +17,7 @@ FROM debian:stable-slim
 
 COPY --from=builder /usr/src/pizza/target/release/pizza /pizza
 COPY img /img
-CMD /pizza
+CMD ["/pizza"]
 ARG PIZZA="Quattro Formaggi"
 ENV PIZZA $PIZZA
 EXPOSE 8000

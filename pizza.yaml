@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: pizza
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: pizza
@@ -28,4 +29,3 @@ spec:
   ports:
   - port: 80
     targetPort: 8000
-    nodePort: 31000

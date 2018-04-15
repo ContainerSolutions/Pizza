@@ -4,12 +4,15 @@
 extern crate rocket;
 #[macro_use]
 extern crate failure;
+extern crate ctrlc;
 
 use failure::Error;
 
 use std::path::{Path, PathBuf};
 
 use rocket::config::{Config, Environment};
+use rocket::fairing;
+use rocket::http::hyper::header::Pragma;
 use rocket::request::Request;
 use rocket::response::{self, content, NamedFile, Responder};
 use std::env;
@@ -44,7 +47,9 @@ impl Pizza {
 
 impl<'a> Responder<'a> for Pizza {
     fn respond_to(self, req: &Request) -> response::Result<'a> {
-        content::Html(self.html()).respond_to(req)
+        let mut res = content::Html(self.html()).respond_to(req)?;
+        res.set_header(Pragma::NoCache);
+        Ok(res)
     }
 }
 
@@ -84,11 +89,17 @@ fn images(file: PathBuf) -> Option<NamedFile> {
 pub fn index() -> Result<Pizza, Error> {
     match env::var("PIZZA") {
         Ok(flavour) => {
-            println!("flavour");
             kitchen(&flavour)
         }
         _ => kitchen("Hawaiian"),
     }
+}
+
+fn attach_sigterm() -> Result<(), Error> {
+    ctrlc::set_handler(|| {
+        println!("SIGTERM caught, shutting down...");
+        std::process::exit(0);
+    }).map_err(|e| e.into())
 }
 
 fn main() {
@@ -98,6 +109,11 @@ fn main() {
         .finalize()
         .unwrap();
 
-    let app = rocket::custom(config, false);
+    let app = rocket::custom(config, false).attach(fairing::AdHoc::on_attach(|r| {
+        match attach_sigterm() {
+            Ok(_) => Ok(r),
+            Err(_) => Err(r),
+        }
+    }));
     app.mount("/", routes![index, images]).launch();
 }

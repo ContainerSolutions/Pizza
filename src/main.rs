@@ -88,9 +88,7 @@ fn images(file: PathBuf) -> Option<NamedFile> {
 #[get("/")]
 pub fn index() -> Result<Pizza, Error> {
     match env::var("PIZZA") {
-        Ok(flavour) => {
-            kitchen(&flavour)
-        }
+        Ok(flavour) => kitchen(&flavour),
         _ => kitchen("Hawaiian"),
     }
 }
@@ -101,7 +99,7 @@ fn attach_sigterm(r: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
         std::process::exit(0);
     }) {
         Ok(_) => Ok(r),
-        Err(_) => Err(r)
+        Err(_) => Err(r),
     }
 }
 

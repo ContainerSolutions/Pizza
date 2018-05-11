@@ -3,7 +3,7 @@ Example Rust Web App
 
 Simple and small webapp that just returns the pizza of the day:
 
-----
+```
 $ cargo run &
 Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
      Running `target/debug/pizza`
@@ -20,12 +20,12 @@ $ curl localhost:8000
             <p>Ham and pineapple, the most controvesial of pizzas</p>
         </body>
         </html>
-----
+```
 
 The pizza can changed through an environment variable (choices are Hawaiian,
 Quattro Formaggi, Margherita or Four Seasons):
 
-----
+```
 $ PIZZA=Margherita cargo run &
 Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
      Running `target/debug/pizza`
@@ -44,7 +44,7 @@ $ curl localhost:8000
         </body>
         </html>
 ...
-----
+```
 
 There is also a Docker build file and a Kubernetes deployment yaml.
 
